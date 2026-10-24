@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoloQ Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070b14;
+  --card: rgba(18,24,48,0.8);
+  --cyan: #22d3ee;
+  --purple: #a855f7;
+  --pink: #ec4899;
+  --gold: #fbbf24;
+  --green: #4ade80;
+  --red: #f87171;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --border: rgba(148,163,184,0.15);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 15% 0%, rgba(168,85,247,0.18) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 30%, rgba(34,211,238,0.12) 0%, transparent 45%);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+
+.prize {
+  background: linear-gradient(135deg, #7c3aed, #ec4899, #f59e0b);
+  background-size: 200% 200%;
+  animation: shift 6s ease infinite;
+  border-radius: 18px;
+  padding: 1.1rem 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 40px rgba(236,72,153,0.35);
+  position: relative;
+  overflow: hidden;
+}
+.prize::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shine 3s infinite;
+}
+@keyframes shift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes shine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.prize h2 { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; letter-spacing: 1px; position: relative; z-index: 1; }
+.prize p { position: relative; z-index: 1; font-weight: 600; margin-top: 0.3rem; }
+
+header { text-align: center; padding: 1rem 0 1.5rem; }
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899, #fbbf24);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: text 8s linear infinite;
+  filter: drop-shadow(0 0 18px rgba(168,85,247,0.4));
+}
+@keyframes text { to { background-position: 300% 50%; } }
+.sub { color: var(--muted); margin: 0.4rem 0; }
+.dates {
+  display: inline-block;
+  background: linear-gradient(90deg, rgba(34,211,238,0.15), rgba(168,85,247,0.15));
+  border: 1px solid rgba(34,211,238,0.4);
+  color: var(--cyan);
+  padding: 0.35rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 1.25rem 0;
+}
+input, select, button {
+  font-family: inherit;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+}
+button {
+  cursor: pointer;
+  font-weight: 600;
+  background: linear-gradient(135deg, #22d3ee, #a855f7);
+  border: none;
+  color: white;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(168,85,247,0.45); }
+button.sec { background: var(--card); border: 1px solid var(--border); color: var(--text); }
+button.danger { background: linear-gradient(135deg, #f87171, #ef4444); }
+#status { color: var(--muted); font-size: 0.9rem; }
+
+.table-wrap {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.85rem 0.75rem; text-align: left; }
+th {
+  background: rgba(7,11,20,0.7);
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--border);
+}
+tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+tr:hover { background: rgba(30,41,80,0.5); }
+tr:nth-child(1) { background: linear-gradient(90deg, rgba(251,191,36,0.08), transparent); }
+tr:nth-child(2) { background: linear-gradient(90deg, rgba(148,163,184,0.06), transparent); }
+tr:nth-child(3) { background: linear-gradient(90deg, rgba(251,146,60,0.06), transparent); }
+.rank { font-family: 'Orbitron', sans-serif; font-weight: 700; }
+.rank1 { color: #fbbf24; text-shadow: 0 0 8px #fbbf24; }
+.rank2 { color: #cbd5e1; }
+.rank3 { color: #fb923c; }
+.pos { color: var(--green); font-weight: 600; }
+.neg { color: var(--red); font-weight: 600; }
+.empty { text-align: center; padding: 3.5rem 1rem; color: var(--muted); }
+
+.modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal.show { display: flex; }
+.box {
+  background: linear-gradient(180deg, #1a1f3a, #0f1428);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.6rem;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+.box h3 { font-family: 'Orbitron', sans-serif; color: var(--cyan); margin-bottom: 1rem; }
+.fg { margin-bottom: 0.9rem; }
+.fg label { display: block; margin-bottom: 0.3rem; color: var(--muted); font-size: 0.85rem; }
+.fg input { width: 100%; }
+.actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.2rem; }
+
+@media (max-width: 700px) {
+  th, td { padding: 0.6rem 0.4rem; font-size: 0.85rem; }
+  .hide { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="prize">
+    <h2>🏆 SKIN À GAGNER ✨</h2>
+    <p>Le 1er du classement (plus de LP gagnés en Solo/Duo) remporte un skin exclusif !</p>
+  </div>
+
+  <header>
+    <h1>SOLOQ CHALLENGE</h1>
+    <p class="sub">Classement par LP gagnés • Ranked Solo/Duo uniquement</p>
+    <div class="dates">Du 24/10/26 au 08/11/26</div>
+  </header>
+
+  <div class="toolbar">
+    <select id="region">
+      <option value="euw1">EUW</option>
+      <option value="eune1">EUNE</option>
+      <option value="na1">NA</option>
+      <option value="kr">KR</option>
+      <option value="br1">BR</option>
+      <option value="jp1">JP</option>
+      <option value="oc1">OCE</option>
+      <option value="tr1">TR</option>
+      <option value="ru">RU</option>
+      <option value="la1">LAN</option>
+      <option value="la2">LAS</option>
+    </select>
+    <button type="button" class="sec" onclick="refreshAll()">🔄 Actualiser</button>
+    <span id="status"></span>
+    <div style="flex:1"></div>
+    <button type="button" onclick="openModal()">+ Ajouter un joueur</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="table" style="display:none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Joueur</th>
+          <th>Riot ID</th>
+          <th>Rank</th>
+          <th>LP</th>
+          <th>LP Gagnés</th>
+          <th>V</th>
+          <th>D</th>
+          <th>WR</th>
+          <th class="hide">Streak</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty">Aucun joueur pour le moment.<br>Ajoute tes amis avec leur Riot ID (Nom#Tag).</div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <h3 id="modalTitle">Ajouter un joueur</h3>
+    <div class="fg">
+      <label>Nom affiché</label>
+      <input type="text" id="fName" placeholder="Pseudo (optionnel)">
+    </div>
+    <div class="fg">
+      <label>Riot ID (Nom#Tag) *</label>
+      <input type="text" id="fRiot" placeholder="Ex: Faker#KR1">
+    </div>
+    <div class="actions">
+      <button type="button" class="sec" onclick="closeModal()">Annuler</button>
+      <button type="button" onclick="savePlayer()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_KEY = 'RGAPI-c364f2a4-6edb-4015-b459-cc084552506f';
+let players = [];
+let editId = null;
+let region = 'euw1';
+const ROUTING = { euw1:'europe', eune1:'europe', na1:'americas', kr:'asia', br1:'americas', jp1:'asia' };
+
+function setStatus(t) { document.getElementById('status').textContent = t || ''; }
+
+function load() {
+  try {
+    const s = localStorage.getItem('sqc_v3');
+    if (s) players = JSON.parse(s);
+  } catch(e) { players = []; }
+  render();
+}
+function persist() {
+  try { localStorage.setItem('sqc_v3', JSON.stringify(players)); } catch(e) {}
+}
+
+function getWR(w, l) {
+  const t = (w||0)+(l||0);
+  return t ? Math.round((w/t)*100)+'%' : '0%';
+}
+function fmtRank(tier, rank) {
+  if (!tier) return 'Unranked';
+  const t = tier.charAt(0) + tier.slice(1).toLowerCase();
+  // Master / Grandmaster / Challenger n'ont pas de division
+  if (['Master', 'Grandmaster', 'Challenger'].includes(t)) return t;
+  return rank ? `${t} ${rank}` : t;
+}
+
+function render() {
+  const tbody = document.getElementById('tbody');
+  const table = document.getElementById('table');
+  const empty = document.getElementById('empty');
+  tbody.innerHTML = '';
+
+  if (!players.length) {
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  table.style.display = 'table';
+  empty.style.display = 'none';
+
+  const sorted = [...players].sort((a,b) => (b.lpGained||0) - (a.lpGained||0));
+  sorted.forEach((p, i) => {
+    const g = p.lpGained || 0;
+    const rc = i===0 ? 'rank1' : i===1 ? 'rank2' : i===2 ? 'rank3' : '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="rank ${rc}">${i+1}</td>
+      <td style="font-weight:600">${p.name || p.riotId}</td>
+      <td>${p.riotId || '—'}</td>
+      <td>${fmtRank(p.tier, p.rank)}</td>
+      <td>${p.lp || 0}</td>
+      <td class="${g>0?'pos':g<0?'neg':''}">${g>0?'+':''}${g}</td>
+      <td>${p.wins||0}</td>
+      <td>${p.losses||0}</td>
+      <td style="color:var(--cyan);font-weight:600">${getWR(p.wins, p.losses)}</td>
+      <td class="hide">${p.hotStreak ? '🔥' : '—'}</td>
+      <td>
+        <button type="button" class="sec" style="padding:0.35rem 0.6rem;font-size:0.8rem" onclick="edit(${p.id})">✏️</button>
+        <button type="button" class="danger" style="padding:0.35rem 0.6rem;font-size:0.8rem" onclick="del(${p.id})">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function openModal() {
+  editId = null;
+  document.getElementById('modalTitle').textContent = 'Ajouter un joueur';
+  document.getElementById('fName').value = '';
+  document.getElementById('fRiot').value = '';
+  document.getElementById('modal').classList.add('show');
+  setTimeout(() => document.getElementById('fRiot').focus(), 50);
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+function savePlayer() {
+  const riot = document.getElementById('fRiot').value.trim();
+  if (!riot || !riot.includes('#')) {
+    alert('Entre un Riot ID valide (Nom#Tag)');
+    return;
+  }
+  const name = document.getElementById('fName').value.trim() || riot.split('#')[0];
+
+  if (editId) {
+    const p = players.find(x => x.id === editId);
+    if (p) {
+      const old = p.riotId;
+      p.name = name;
+      p.riotId = riot;
+      if (old !== riot) p.startLP = null;
+    }
+  } else {
+    players.push({
+      id: Date.now(),
+      name, riotId: riot,
+      startLP: null, lp: 0, lpGained: 0,
+      wins: 0, losses: 0, tier: null, rank: null, hotStreak: false
+    });
+  }
+  persist();
+  render();
+  closeModal();
+  setStatus('Joueur enregistré');
+}
+function edit(id) {
+  const p = players.find(x => x.id === id);
+  if (!p) return;
+  editId = id;
+  document.getElementById('modalTitle').textContent = 'Éditer le joueur';
+  document.getElementById('fName').value = p.name || '';
+  document.getElementById('fRiot').value = p.riotId || '';
+  document.getElementById('modal').classList.add('show');
+}
+function del(id) {
+  if (!confirm('Supprimer ce joueur ?')) return;
+  players = players.filter(p => p.id !== id);
+  persist();
+  render();
+}
+
+async function refreshAll() {
+  if (!players.length) { setStatus('Aucun joueur'); return; }
+  setStatus('Actualisation...');
+  region = document.getElementById('region').value;
+  let ok = 0;
+  for (const p of players) {
+    try {
+      await updateOne(p);
+      ok++;
+      await new Promise(r => setTimeout(r, 350));
+    } catch(e) {
+      console.error(e);
+      setStatus('Erreur : ' + e.message);
+    }
+  }
+  persist();
+  render();
+  setStatus('Actualisé ' + ok + '/' + players.length);
+}
+async function updateOne(p) {
+  if (!p.riotId || !p.riotId.includes('#')) throw new Error('Riot ID invalide (format Nom#Tag)');
+  const [gn, tag] = p.riotId.split('#');
+  const route = ROUTING[region] || 'europe';
+
+  // Proxy CORS (public)
+  const proxy = 'https://corsproxy.io/?';
+
+  // 1. Get PUUID
+  const accUrl = `https://${route}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gn)}/${encodeURIComponent(tag)}`;
+  const a = await fetch(proxy + encodeURIComponent(accUrl), {
+    headers: { 'X-Riot-Token': API_KEY }
+  });
+  if (!a.ok) {
+    const txt = await a.text().catch(() => '');
+    throw new Error(`Compte introuvable (${a.status})`);
+  }
+  const acc = await a.json();
+  if (!acc.puuid) throw new Error('PUUID manquant');
+
+  // 2. Ranked Solo/Duo
+  const leagueUrl = `https://${region}.api.riotgames.com/lol/league/v4/entries/by-puuid/${acc.puuid}`;
+  const l = await fetch(proxy + encodeURIComponent(leagueUrl), {
+    headers: { 'X-Riot-Token': API_KEY }
+  });
+  if (!l.ok) {
+    throw new Error(`Ranked indisponible (${l.status})`);
+  }
+  const entries = await l.json();
+  console.log('API response for', p.riotId, entries);
+
+  const solo = Array.isArray(entries) ? entries.find(e => e.queueType === 'RANKED_SOLO_5x5') : null;
+  if (!solo) {
+    p.tier = null; p.rank = null; p.lp = 0; p.wins = 0; p.losses = 0; p.lpGained = 0; p.hotStreak = false;
+    return;
+  }
+
+  const lp = solo.leaguePoints || 0;
+  if (p.startLP == null) p.startLP = lp;
+  p.lp = lp;
+  p.lpGained = lp - p.startLP;
+  p.tier = solo.tier || null;
+  p.rank = solo.rank || null;
+  p.wins = solo.wins || 0;
+  p.losses = solo.losses || 0;
+  p.hotStreak = !!solo.hotStreak;
+}
+
+document.getElementById('region').onchange = function() { region = this.value; };
+load();
+</script>
+</body>
+</html>
